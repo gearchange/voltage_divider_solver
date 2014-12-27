@@ -26,8 +26,8 @@ static inline bool increment_resistor(RESISTOR *r){
 	return false;
 }
 
-static inline double calc_partial_voltage(const RESISTOR upside, const RESISTOR downside, const double suppry_voltage){
-	return calc_resistor_value(downside) / (calc_resistor_value(downside) + calc_resistor_value(upside)) * suppry_voltage;
+static inline double calc_partial_voltage(const RESISTOR upside, const RESISTOR downside, const double supply_voltage){
+	return calc_resistor_value(downside) / (calc_resistor_value(downside) + calc_resistor_value(upside)) * supply_voltage;
 }
 
 static inline bool compare_resistor(const RESISTOR a, const RESISTOR b){
@@ -35,14 +35,14 @@ static inline bool compare_resistor(const RESISTOR a, const RESISTOR b){
 	else return false;
 }
 
-void voltage_divider_solver(double *upside_resistor, double *downside_resistor, const double suppry_voltage, const double target_voltage){
+void voltage_divider_solver(double *upside_resistor, double *downside_resistor, const double supply_voltage, const double target_voltage){
 
 	RESISTOR upside = {0, 0}, downside = {0, 0};
 	RESISTOR upside_best = {0, 0}, downside_best = {0, 0};
 
 	while(1){
 
-		double tmp_voltage = calc_partial_voltage(upside, downside, suppry_voltage);
+		double tmp_voltage = calc_partial_voltage(upside, downside, supply_voltage);
 
 		if(tmp_voltage < target_voltage){
 			if(increment_resistor(&downside))break;
@@ -52,8 +52,8 @@ void voltage_divider_solver(double *upside_resistor, double *downside_resistor, 
 			break;
 		}
 
-		if(fabs(target_voltage - calc_partial_voltage(upside, downside, suppry_voltage)) <
-				fabs(target_voltage - calc_partial_voltage(upside_best, downside_best, suppry_voltage))){
+		if(fabs(target_voltage - calc_partial_voltage(upside, downside, supply_voltage)) <
+				fabs(target_voltage - calc_partial_voltage(upside_best, downside_best, supply_voltage))){
 			downside_best = downside;
 			upside_best = upside;
 		}
